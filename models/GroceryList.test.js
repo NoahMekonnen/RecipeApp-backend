@@ -1,9 +1,11 @@
 const GroceryList = require("./GroceryList");
 const User = require("./User");
+const Product = require("./Product.js");
 
 
-const {testUser1, commonAfterAll, commonBeforeAll, commonAfterEach} = require("../_testCommon.js");
-const { default: mongoose } = require("mongoose");
+const {testUser1, commonAfterAll, commonBeforeAll, commonAfterEach, testProduct1, testProduct2} = require("../_testCommon.js");
+const mongoose = require("mongoose");
+
 
 beforeAll(async () => {
     await commonBeforeAll();
@@ -45,6 +47,48 @@ describe("Create Grocery List", function() {
         } catch(err) {
             expect(err).toBeInstanceOf(mongoose.Error.ValidationError);
         }
+    });
+});
+
+/******************************************************READ */
+
+describe("Get all products in a grocery list", () => {
+    test("simple", async () => {
+        const user1 = await User.create(testUser1);
+        const groceryList1 = await GroceryList.create({user: user1._id});
+        const product1 = await Product.create({
+            ...testProduct1,
+            groceryList: groceryList1._id
+        });
+        const product2 = await Product.create({
+            ...testProduct2,
+            groceryList: groceryList1._id
+        });
+
+        groceryList1.products = [product1._id, product2._id];
+        await groceryList1.save();
+
+        const updatedGroceryList = await GroceryList.findById(groceryList1._id).populate('products');
+        
+        expect(updatedGroceryList.products.length).toEqual(2);
+        expect(updatedGroceryList.products[0].title).toEqual("Product1");
+    });
+});
+
+
+/******************************************************UPDATE */
+
+describe("Updating Grocery List", () => {
+    test("adding products to list", async () => {
+        const user1 = await User.create(testUser1);
+        const groceryList1 = await GroceryList.create({user: user1._id});
+        const product1 = new Product(testProduct1);
+        const product2 = new Product(testProduct2);
+        groceryList1.products = [product1, product2];
+
+        await groceryList1.save();
+
+        expect(groceryList1.products.length).toEqual(2);
     });
 });
 
