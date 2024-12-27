@@ -1,4 +1,4 @@
-const { testUser1, commonBeforeAll, commonAfterEach, commonAfterAll, tokens, testMeal1, testMeal2 } = require("../_testCommon");
+const { testUser1, commonBeforeAll, commonAfterEach, commonAfterAll, tokens, testMeal1, testMeal2, testUser2 } = require("../_testCommon");
 const GroceryList = require("../models/GroceryList");
 const Product = require("../models/Product");
 const User = require("../models/User");
@@ -14,6 +14,67 @@ beforeAll(async () => await commonBeforeAll());
 afterEach(async () => await commonAfterEach());
 afterAll(async () => await commonAfterAll());
 
+
+/******************************************************GET /users */
+
+describe("GET /users", () => {
+    test("logged in", async () => {
+        await User.create(testUser1);
+        await User.create(testUser2);
+        const resp = await request(app)
+                            .get("/users")
+                            .set("authorization", `Bearer ${tokens[0]}`);
+        
+        expect(resp.status).toEqual(200);
+        expect(resp.body.users.length).toEqual(2);
+        expect(resp.body.users[0].username).toEqual("testuser1");
+    });
+
+    test("not logged in", async () => {
+        await User.create(testUser1);
+        await User.create(testUser2);
+        const resp = await request(app)
+                            .get("/users");
+        
+        expect(resp.status).toEqual(200);
+        expect(resp.body.users.length).toEqual(2);
+        expect(resp.body.users[0].username).toEqual("testuser1");
+    });
+
+});
+
+
+/******************************************************GET /users/:id */
+
+describe("GET /users/:id", () => {
+    test("logged in", async () => {
+        const user = await User.create(testUser1);
+        const resp = await request(app)
+                            .get(`/users/${user._id}`)
+                            .set("authorization", `Bearer ${tokens[0]}`);
+
+        expect(resp.status).toEqual(200)
+        expect(resp.body.user.username).toEqual("testuser1");
+    });
+
+    test("not logged in", async () => {
+        const user = await User.create(testUser1);
+        const resp = await request(app)
+                            .get(`/users/${user._id}`);
+
+        expect(resp.status).toEqual(200)
+        expect(resp.body.user.username).toEqual("testuser1");
+    });
+
+    test("not found", async () => {
+        const user = await User.create(testUser1);
+        const resp = await request(app)
+                            .get(`/users/${new mongoose.Types.ObjectId()}`);
+
+        expect(resp.status).toEqual(404);
+});
+
+});
 
 /******************************************************PATCH /users/:id/meals/:mealId */
 

@@ -6,6 +6,35 @@ const { NotFoundError, UnauthorizedError } = require("../expressError");
 const router = express.Router();
 
 
+/** GET /users
+ * 
+ * => {users}
+ */
+router.get("/", async (req, res, next) => {
+    try {
+        const users = await User.find();
+
+        return res.json({users});
+    } catch(err) {
+        return next(err);
+    }
+});
+
+/** GET /users/:id
+ * 
+ *  => {user}
+ */
+router.get("/:id", async (req, res, next) => {
+    try {
+        const user = await User.findOne({_id:req.params.id});
+        if(!user) throw new NotFoundError();
+
+        return res.json({user});
+    } catch(err) {
+        return next(err);
+    }
+})
+
 /** PATCH /users/:id/meals/:mealId
  * 
  * => {user}

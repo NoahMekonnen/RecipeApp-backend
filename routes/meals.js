@@ -53,11 +53,15 @@ router.get("/", async (req, res, next) => {
  */
 router.get("/:id", async (req, res, next) => {
     try {
-        const meal = await Meal.findOne({_id: req.params.id});
+        const meal = await Meal.findOne({spoonacularId: req.params.id});
         if(!meal) throw new NotFoundError();
+    
         const resp = await axios.get(
             `${process.env.SPOONACULAR_BASE_URL}/recipes/${meal.spoonacularId}/information?apiKey=${process.env.SPOONACULAR_API_KEY}`);
-        meal.ingredients = resp.data.extendedIngredients;
+        console.log(typeof meal.ingredients)
+        for (let ingredient of resp.data.extendedIngredients) {
+            meal.ingredients.push(ingredient.name);
+        }
 
         await meal.save();
 

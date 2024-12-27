@@ -17,7 +17,7 @@ router.post("/register", async (req, res, next) => {
     try{
         const user = await User.create(req.body);
         const token = jwt.sign(req.body, "secret");
-
+        console.log("here")
         return res.json({token});
     } catch(err) {
         if (err instanceof mongoose.Error.ValidationError) err.status = 400;

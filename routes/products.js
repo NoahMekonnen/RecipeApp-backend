@@ -27,18 +27,19 @@ router.post("/", isLoggedIn, async (req, res, next) => {
 
 /** GET /products
  * 
- * {filter, number} => {products}
+ * {filter} => {products}
  */
 router.get("/", async (req, res, next) => {
     try {
-        const {filter, number} = req.query;
-        if(!max) throw new BadRequestError();
+        const {filter} = req.query;
         const resp = await axios.get(`
-            ${process.env.MONGODB_DATABASE_URI}/food/products/search?apiKey=${process.env.SPOONACULAR_API_KEY}&query=${filter}&number=${number}`);
+            ${process.env.SPOONACULAR_BASE_URL}/food/products/search?apiKey=${process.env.SPOONACULAR_API_KEY}&query=${filter}`);
         const products = resp.data.products;
+        console.log(`${process.env.SPOONACULAR_BASE_URL}/food/products/search?apiKey=${process.env.SPOONACULAR_API_KEY}&query=${filter}`)
+        console.log(resp.data)
         for(let product of products) {
             const databaseProduct = await Product.findOne({title: product.title});
-            if(!databaseProduct.title) {
+            if(!databaseProduct) {
                 await Product.create({title: product.title, image: "http://dummyimage.com/249x100.png/dddddd/000000"});
             }
         }

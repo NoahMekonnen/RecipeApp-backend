@@ -60,11 +60,11 @@ describe("POST /products", () => {
 /******************************************************GET /products */
 describe("GET /products", () => {
     test("logged in", async () => {
-        const products = jest.fn((number) => [
+        const products = jest.fn(() => [
             {title: "Product1", image: "fail.png"},
             {title: "Product2", image: "fail.png"},
             {title: "Product3", image: "fail.png"}
-        ].slice(number)
+        ]
         );
         
         const fetchProducts = async (token) => {
