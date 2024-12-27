@@ -1,10 +1,7 @@
 # Foodies Backend
 
-This is the backend for the Foodies app.
-
-## Database Schema
-
-- POST LATER
+This is the backend for the Foodies app. Although the frontend hasn't been it allows any users to manage their food experience.
+Whether you're looking to make grocery lists or find your favorite meals this is the place to go.
 
 ## Getting Started
 
@@ -13,10 +10,6 @@ This is the backend for the Foodies app.
 - Node.js
 - Express.js
 - Mongodb
-
-### Installation
-
-- POST LATER
 
 ## Usage
 
@@ -28,7 +21,8 @@ This is the backend for the Foodies app.
 - npm test file.test.js (for running separately)
 
 ### Additional notes
-- external apis i used
+
+- https://api.spoonacular.com 
 
 
 
